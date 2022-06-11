@@ -45,6 +45,25 @@ spec:
 `kubectl get pod -l app=demo`
 + show all labels\
 `kubectl get all --show-labels`
++ assigned resource for very pod
+```yml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mypod
+  labels:
+    app: demo
+spec:
+  containers:
+  - name: mypod
+    image: nginx
+    ports:
+      - containerPort: 80
+    resources:
+      limits:  
+        memory: "128Mi"
+        cpu: "500m" 
+```
 + namespace
 + check default namespace\
 `kubectl config view`
@@ -56,3 +75,51 @@ spec:
 `kubectl create -f mypod.yml -n=mynamespace`
 + get pod from mynamespace\
 `kubectl get pod -n=mynamespace`
+
+## Deployment
+```yml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mydeployment
+  labels:
+    app: demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: demo
+  template:
+    metadata:
+      labels:
+        app: demo
+    spec:
+      containers:
+        - name: mydeployment
+          image: nginx
+          ports:
+            - containerPort: 80
+          resources:
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
+```
+## Service
+### ClusterIP
+```yml
+apiVersion: v1
+kind: Service
+metadata:
+  name: myservice
+spec:
+  type: ClusterIP
+  selector:
+    app: demo
+  ports:
+    - port: 80
+      targetPort: 80 
+```
++ port-forward\
+`kubectl port-forward <svc/service-name> outerport:innerport`\
+`kubectl port-forward svc/myservice 8080:80`
+
