@@ -122,4 +122,25 @@ spec:
 + port-forward\
 `kubectl port-forward <svc/service-name> outerport:innerport`\
 `kubectl port-forward svc/myservice 8080:80`
+### NodePort
+```yml
+apiVersion: v1
+kind: Service
+metadata:
+  name: myservice
+spec:
+  type: NodePort
+  selector:
+    app: demo
+  ports:
+    - port: 80
+      targetPort: 80
+      nodePort: 30012  
+```
++ access through port\
+`kubectl get service`\
+`CLUSTER-IP:nodePort`\
+or\
+`minikube service <service-name>`\
+Its redirect to the browser
 
