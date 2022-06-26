@@ -1,5 +1,20 @@
 # k8s
 
+Its application orchestrator\
+deployment and managing the container\
+Adv\
+Autohealing\
+Rollback
++ Master node (Controll plane)\
+ etcd distributed data base in cluster\
+ api server communicate through CLI or Browser\
+ controll manager manage the pod desire state and actual state\
+ shedular shedul pod and assigned to node
++ Worker node\
+  kubelet agent per node that make sure every container runs inside the pod\
+  kubeproxy per node that network proxy that assgined IP address for POD\
+  container run time that pull the image
+ 
 ## POD
 + create pod\
 `kubectl run <pod-name> --image=<image-name>`\
