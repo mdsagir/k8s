@@ -26,32 +26,22 @@ Rollback
   
  
 ## POD
+A smallest deployment unit is POD, have 1 or more container, its share network volume.
 + create pod\
-`kubectl run <pod-name> --image=<image-name>`\
-`kubectl run mypod --image=nginx`
-+ describe pos\
+`kubectl run <pod-name> --image=<image-name> --port <port-number>`\
+`kubectl run mypod --image=nginx --port=80` 
++ Port forwarding\
+ `kubectl port-forward pod/mypod 8080:80`\
+ and go to on browser http://localhost:8080/
++ Describe pod\
 `kubectl describe pod mypod`
-+ enter into pod container\
++ Enter into pod container\
 `kubectl exec -it mypod --bash`
 + nginx html file location\
 `/usr/share/nginx/html`
-+ get pod info in yml format\
++ Get pod info in yml format\
 `kubectl get pod first -o yaml`
-+ create pod through yml
-```yml
-apiVersion: v1
-kind: Pod
-metadata:
-  name: mypod
-spec:
-  containers:
-  - name: mypod
-    image: nginx
-```          
-+ command apply in yml pod\
-`kubectl create -f mypod.yml`\
-`kubectl delete -f mypod.yml`
-+ labels 
++ Create pod through yml        
 ```yml
 apiVersion: v1
 kind: Pod
@@ -66,6 +56,9 @@ spec:
     ports:
       - containerPort: 80
 ```
++ command apply in yml pod\
+`kubectl create -f mypod.yml`\
+`kubectl delete -f mypod.yml`
 + filter resource through labels\
 `kubectl get pod -l app=demo`
 + show all labels\
