@@ -16,7 +16,13 @@ Rollback
  1. **Kubelet** : Agent that run every Node, responsible for running the container inside the POD.
  2. **Kube Proxy**: Agent that also run every Node, that manage the local cluster networking 
  3. **Container Runtime** : Responsible for runtime container
-  
+ ## Minikube
+ + Get node info\
+ `kubectl get nodes`
+ + Node inside\
+ `minikube ssh`
+ + Node logs\
+  `minikube logs -f`
   
  
 ## POD
