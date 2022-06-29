@@ -26,15 +26,23 @@ Rollback
   
  
 ## POD
-A smallest deployment unit is POD, have 1 or more container, its share network volume.
+A smallest deployment unit is POD, have 1 or more container, its share network volume, its not autohealing
 + create pod\
 `kubectl run <pod-name> --image=<image-name> --port <port-number>`\
 `kubectl run mypod --image=nginx --port=80` 
 + Port forwarding\
  `kubectl port-forward pod/mypod 8080:80`\
  and go to on browser http://localhost:8080/
++ Get the pod\
+`kubectl get pod mypod`
++ Get all the pod including cluster\
+ `kubectl get pod -A`
++ Get all the running object including cluster\
+ `kubectl get all -A` 
 + Describe pod\
 `kubectl describe pod mypod`
++ Get log info\
+ `kubectl logs mypod`
 + Enter into pod container\
 `kubectl exec -it mypod --bash`
 + nginx html file location\
@@ -53,36 +61,23 @@ spec:
   containers:
   - name: mypod
     image: nginx
-    ports:
-      - containerPort: 80
-```
-+ command apply in yml pod\
-`kubectl create -f mypod.yml`\
-`kubectl delete -f mypod.yml`
-+ filter resource through labels\
-`kubectl get pod -l app=demo`
-+ show all labels\
-`kubectl get all --show-labels`
-+ assigned resource for very pod
-```yml
-apiVersion: v1
-kind: Pod
-metadata:
-  name: mypod
-  labels:
-    app: demo
-spec:
-  containers:
-  - name: mypod
-    image: nginx
-    ports:
-      - containerPort: 80
     resources:
       limits:  
         memory: "128Mi"
-        cpu: "500m" 
+        cpu: "500m"     
+    ports:
+      - containerPort: 80 
 ```
-+ namespace
++ Command apply in yml pod\
+`kubectl apply -f mypod.yml`\
+`kubectl delete -f mypod.yml`
++ Filter resource through labels\
+`kubectl get pod -l app=demo`
++ Show all labels\
+`kubectl get all --show-labels`
++ Assigned resource for very pod
+
++ Namespace
 + check default namespace\
 `kubectl config view`
 + show list of namespace\
@@ -90,11 +85,12 @@ spec:
 + create namespace\
 `kubectl create ns mynamespace`
 + create pod assigned with namespace\
-`kubectl create -f mypod.yml -n=mynamespace`
+`kubectl apply -f mypod.yml -n=mynamespace`
 + get pod from mynamespace\
 `kubectl get pod -n=mynamespace`
 
 ## Deployment
+Mange the pod, zerodowntime deployment and create replicaset, autohealing
 ```yml
 apiVersion: apps/v1
 kind: Deployment
@@ -122,6 +118,9 @@ spec:
               memory: "128Mi"
               cpu: "500m"
 ```
++ Deploy\
+`kubectl apply -f mydeployment`
++ Delete the 1 of the pod and see replicaset will create a pod instead
 ## Service
 ### ClusterIP
 ```yml
