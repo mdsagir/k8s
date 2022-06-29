@@ -5,22 +5,17 @@ deployment and managing the container\
 Adv\
 Autohealing\
 Rollback
-+ Master node (Controll plane)\
- etcd distributed data base in cluster\
- api server communicate through CLI or Browser\
- controll manager manage the pod desire state and actual state\
- shedular shedul pod and assigned to node
-+ Worker node\
-  kubelet agent per node that make sure every container runs inside the pod\
-  kubeproxy per node that network proxy that assgined IP address for POD\
-  container run time that pull the image
+
 ## Componenet of kubernetes
-+ Controll plane (Master Node)
-  1. API Server : that expose the rest API
-  and all communication happend through API server, Its checks authentication and authorization, also command line request apply through kubectl\
-  2. etcd : Its distributed data base store entire the cluster configuration, its also store user created object manifesto file.\
-  3. schedular : Its create POD assigned to the node, its checkes health state, resources, port\
-  4. controller manager : Its deamon that manage the all controller basically its constroller of controllers, Its checks desire state of pod.
+ ### Controll plane (Master Node)
+ 1. **API Server** : that expose the rest API and all communication happend through API server, Its checks authentication and authorization, also command line request apply through kubectl.
+ 2. **etcd** : Its distributed data base store entire the cluster configuration, its also store user created object manifesto file.
+ 3. **Schedular** : Its create POD assigned to the node, its checkes health state, resources, port
+ 4. **Controller Manager** : Its deamon that manage the all controller basically its constroller of controllers, Its checks desire state of pod.
+ ### Worker Node  
+ 1. **Kubelet** : Agent that run every Node, responsible for running the container inside the POD.
+ 2. **Kube Proxy**: Agent that also run every Node, that manage the local cluster networking 
+ 3. **Container Runtime** : Responsible for runtime container
   
   
  
