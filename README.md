@@ -120,7 +120,60 @@ spec:
 ```
 + Deploy\
 `kubectl apply -f mydeployment`
-+ Delete the 1 of the pod and see replicaset will create a pod instead
++ Delete the 1 of the pod and see replicaset will create a pod instead\
++ To get deployment history\
+ `kubectl rollout history deployment mydeployment`
++ To get rollout previous deployment\
+ `kubectl rollout undo deployment mydeployment`
++ To get deployment history details by rivision\
+ `kubectl rollout history deployment mydeployment --revision=3`
+## Deployment strategy
+### Recrete 
+Deleting all the pod then create latest deployment, Its hells downtime of application
+### Rolling Update 
+Create new deployment through pod if get suucess then oldest pod will delete, Incase newly deployment not gets
+ sucess then oldest deployment not goes to deleted
+### Revision History Limit 
+`revisionHistoryLimit` The number of old ReplicaSets to retain to allow rollback. This is a pointer to distinguish between explicit zero and not specified. Defaults to 10.
+### Maximimum Unavailable
+`maxUnavailable` The maximum number of pods that can be unavailable during the update
+### Maximum Surge
+`maxSurge` The maximum number of pods that can be scheduled above the desired number of pods
+```yml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mydeployment
+  labels:
+    app: demo
+  annotations:
+    kubernetes.io/changes-cause: "nginx"  
+spec:
+  replicas: 3
+  revisionHistoryLimit: 20
+  strategy:
+    type: RolllingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  selector:
+    matchLabels:
+      app: demo
+  template:
+    metadata:
+      labels:
+        app: demo
+    spec:
+      containers:
+        - name: mydeployment
+          image: nginx
+          ports:
+            - containerPort: 80
+          resources:
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
+```
 ## Service
 ### ClusterIP
 ```yml
