@@ -175,7 +175,216 @@ spec:
               cpu: "500m"
 ```
 ## Service
+How can access the APP\
+Port-forwading is the only testing\
+Pod IP is unreliable, can scale up or down, new IP will created.
+
+Service have stable IP address, stable DNS, stable port
+### Example of customer-service and order-service
+Customer service are communicate with order service, can be communicate with multiple way
+#### Pod Id mapping
+order-deployment.yml
+```yml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: order
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: order
+  template:
+    metadata:
+      labels:
+        app: order
+    spec:
+      containers:
+        - name: order
+          image: sagiransari/order
+          resources:
+            requests:
+              memory: "756Mi"
+              cpu: "0.5"
+            limits:
+              memory: "756Mi"
+          ports:
+            - containerPort: 8081
+
+```
+Find the IP address  of any of the pod and add into customer deployment
+customer-deployment.yml
+```yml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: customer
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: customer
+  template:
+    metadata:
+      labels:
+        app: customer
+    spec:
+      containers:
+        - name: customer
+          image: sagiransari/customer
+          resources:
+            requests:
+              memory: "756Mi"
+              cpu: "0.5"
+            limits:
+              memory: "756Mi"
+          env:
+            - name: ORDER_URL
+              value: http://172.17.0.10:8081
+          ports:
+            - containerPort: 8080
+
+```
+
+```yml
+         env:
+            - name: <environment-key-name>
+              value: http://<pod-ip>:<pod-port>
+```
+Here mapping is with pod ip can be dangerous pod can be re-create, scale-up or down that case communication will break\
+the lets create service for order microservice
+### Service IP mapping
+
+```yml
+apiVersion: v1
+kind: Service
+metadata:
+  name: order
+spec:
+  type: ClusterIP
+  selector:
+    app: order
+  ports:
+    - port: 8081
+      targetPort: 8081
+```
++ Get details of service of endpoint, Its indicate attached pod into service\
+`kubectl get endpoints`
++ Get IP of service\
+ `kubectl describe svc order`\
+ Now update service IP to order-deployment
+ ```yml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: customer
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: customer
+  template:
+    metadata:
+      labels:
+        app: customer
+    spec:
+      containers:
+        - name: customer
+          image: sagiransari/customer
+          resources:
+            requests:
+              memory: "756Mi"
+              cpu: "0.5"
+            limits:
+              memory: "756Mi"
+          env:
+            - name: ORDER_URL
+              value: http://172.17.0.10:8081
+          ports:
+            - containerPort: 8080
+ ```
+Maintaing the IP address is tedius job instead can map directly with service name rest kubernetes let handle it. 
+### Service name mapping
+```yml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: customer
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: customer
+  template:
+    metadata:
+      labels:
+        app: customer
+    spec:
+      containers:
+        - name: customer
+          image: sagiransari/customer
+          resources:
+            requests:
+              memory: "756Mi"
+              cpu: "0.5"
+            limits:
+              memory: "756Mi"
+          env:
+            - name: ORDER_URL
+              value: http://order:8081
+          ports:
+            - containerPort: 8080
+```
+Now can see here we are updating extra port for that can be the ignore, 80 port not default port, and its not compolsary to assgined lets change the service port 80 and access without port.
+### Service name without port mapping
+lets update order-service yml
+```yml
+apiVersion: v1
+kind: Service
+metadata:
+  name: order
+spec:
+  type: ClusterIP
+  selector:
+    app: order
+  ports:
+    - port: 80
+      targetPort: 8081
+```
+now update customer-deployment ym without port
+```yml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: customer
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: customer
+  template:
+    metadata:
+      labels:
+        app: customer
+    spec:
+      containers:
+        - name: customer
+          image: sagiransari/customer
+          resources:
+            requests:
+              memory: "756Mi"
+              cpu: "0.5"
+            limits:
+              memory: "756Mi"
+          env:
+            - name: ORDER_URL
+              value: http://order
+          ports:
+            - containerPort: 8080
+```
+
 ### ClusterIP
+Its default kubernetes service, that comminicate with in cluster
 ```yml
 apiVersion: v1
 kind: Service
