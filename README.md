@@ -402,6 +402,11 @@ spec:
 `kubectl port-forward <svc/service-name> outerport:innerport`\
 `kubectl port-forward svc/myservice 8080:80`
 ### NodePort
++ Allow to open port across all Node
++ Port range 30000 to 32767
+#### Disadvantages:
++ One servie per port
++ If node IP is changes then we have a problem
 ```yml
 apiVersion: v1
 kind: Service
