@@ -43,3 +43,5 @@ Employee e=new Emplaoyee();
 Employee e2=em.persist(e);
 e2.setName("anajli"); // effeted to table
 ```
+## Transaction
+
