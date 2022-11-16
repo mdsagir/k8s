@@ -20,3 +20,8 @@ User user=  em.find(User.class,1);
  em.clear();
  session.evict(user);
  ```
++ **Remove state** : Entity manger remove the rocord from data base.
+```java
+User user=em.find(User.class,1);
+em.remove(user)
+```
