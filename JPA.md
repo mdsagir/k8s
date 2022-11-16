@@ -144,17 +144,75 @@ If any active transaction use it otherwise run code without transaction
         commentService.userComment();
     }
     @Override
-    @Transactional(propagation = Propagation.SUPPORTS)
+    @Transactional(propagation = Propagation.SUPPORTS) // use existing transaction 
     public void userComment() {
         Comment comment=new Comment();
         comment.setComment("hello");
         entityManager.persist(comment);
     }
     @Override
-    @Transactional(propagation = Propagation.SUPPORTS)
+    @Transactional(propagation = Propagation.SUPPORTS) // use existing transaction 
     public void saveUserLike() {
         Like like=new Like();
         like.setClick("yes");
         entityManager.persist(like);
     }
 ```
+### NOT_SUPPORTED
+If any active transaction suspend it run code without transaction
+```java
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED)
+    public void process() {
+        likeService.saveUserLike();
+        commentService.userComment();
+    }
+    @Override
+    @Transactional(propagation = Propagation.NOT_SUPPORTED)// current transaction are suspended 
+    public void saveUserLike() {
+        Like like=new Like();
+        like.setClick("yes");
+        entityManager.persist(like);
+    }
+    @Override
+    @Transactional(propagation = Propagation.NOT_SUPPORTED) //  current transaction are suspended 
+    public void userComment() {
+        Comment comment=new Comment();
+        comment.setComment("hello");
+        entityManager.persist(comment);
+    }
+```
+### NEVER
+If any active transaction is there throw exception
+```java
+     Case 1
+    @Override
+    @Transactional(propagation = Propagation.NEVER)
+    public void process() {
+        commentService.userComment();
+    } 
+    @Override
+    @Transactional(propagation = Propagation.NEVER) // no active transaction
+    public void userComment() {
+        Comment comment=new Comment();
+        comment.setComment("hello");
+        entityManager.persist(comment);
+    }
+    case 2
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED)
+    public void process() {
+        likeService.saveUserLike();
+    }
+    @Override
+    @Transactional(propagation = Propagation.NEVER) // activ transaction there so throw exception
+    public void saveUserLike() {
+        Like like=new Like();
+        like.setClick("yes");
+        entityManager.persist(like);
+    }
+```
+### NESTED
+If active transaction is there use it if any exception happed it create savepoint and rollaback to transaction at savepoint,
+ if transaction not there create it and use it \
+[Note :JpaDialect does not support savepoints]
