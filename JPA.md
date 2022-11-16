@@ -25,3 +25,21 @@ User user=  em.find(User.class,1);
 User user=em.find(User.class,1);
 em.remove(user)
 ```
+## Merge v/s persist
+
++ persist used for the insert operation while merge used for the insert or update
++ after persist enity are in persit state while merge are not in perisit state rather that return copy entiy which is manage
++ merge are required all perorty to update in case null value will update for partial update
+```java
+Employee e=new Emplaoyee();
+em.persist(e);
+e.setName("rahul"); // effeted to table
+
+Employee e=new Emplaoyee();
+em.merge(e);
+e.setName("rahul"); // not effeted to table
+
+Employee e=new Emplaoyee();
+Employee e2=em.persist(e);
+e2.setName("anajli"); // effeted to table
+```
