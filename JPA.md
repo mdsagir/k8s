@@ -53,4 +53,84 @@ e2.setName("anajli"); // effeted to table
 #### Never
 #### Nested
 
+### REQUIRED (default)
+If exist transaction there use it otherwise create new transaction
+```java
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED)
+    public void process() {
+        likeService.saveUserLike();
+        commentService.userComment();
+    }
+    
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED)
+    public void saveUserLike() {
+        Like like=new Like();
+        like.setClick("yes");
+        entityManager.persist(like);
+    }
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED)
+    public void userComment() {
+        Comment comment=new Comment();
+        comment.setComment("hello");
+        entityManager.persist(comment);
+    }
+```
+### REQUIRES_NEW
+If exiting transaction available suspend it crate new transaction and use it
+```java
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED)
+    public void process() {
+        likeService.saveUserLike();
+        commentService.userComment();
+    }
+    @Override
+    @Transactional(propagation = Propagation.REQUIRES_NEW) // suspend current transaction create new transaction
+    public void saveUserLike() {
+        Like like=new Like();
+        like.setClick("yes");
+        entityManager.persist(like);
+    }
+    @Override
+    @Transactional(propagation = Propagation.REQUIRES_NEW) // suspend current transaction create new transaction
+    public void userComment() {
+        Comment comment=new Comment();
+        comment.setComment("hello");
+        entityManager.persist(comment);
+    }
+```
 ### MANDATORY
+If current transaction available use it otherwise throw the exception
+```java
+    CASE 1
+    @Override
+    public void process() {
+        likeService.saveUserLike();
+        commentService.userComment();
+    }
+    @Override
+    @Transactional(propagation = Propagation.MANDATORY) // throws exception because there are no any transaction
+    public void saveUserLike() {
+        Like like=new Like();
+        like.setClick("yes");
+        entityManager.persist(like);
+    }
+    CASE 2
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED)
+    public void process() {
+        likeService.saveUserLike();
+        commentService.userComment();
+    }
+    @Override
+    @Transactional(propagation = Propagation.MANDATORY) // excute by existing transaction
+    public void saveUserLike() {
+        Like like=new Like();
+        like.setClick("yes");
+        entityManager.persist(like);
+    }
+```
