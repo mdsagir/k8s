@@ -134,3 +134,27 @@ If current transaction available use it otherwise throw the exception
         entityManager.persist(like);
     }
 ```
+### SUPPORTS
+If any active transaction use it otherwise run code without transaction
+```java
+   @Override
+    @Transactional(propagation = Propagation.REQUIRED)
+    public void process() {
+        likeService.saveUserLike();
+        commentService.userComment();
+    }
+    @Override
+    @Transactional(propagation = Propagation.SUPPORTS)
+    public void userComment() {
+        Comment comment=new Comment();
+        comment.setComment("hello");
+        entityManager.persist(comment);
+    }
+    @Override
+    @Transactional(propagation = Propagation.SUPPORTS)
+    public void saveUserLike() {
+        Like like=new Like();
+        like.setClick("yes");
+        entityManager.persist(like);
+    }
+```
