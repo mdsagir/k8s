@@ -45,3 +45,12 @@ e2.setName("anajli"); // effeted to table
 ```
 ## Transaction
 
+#### Mandatory
+#### Required
+#### Required New
+#### Support
+#### Not supported
+#### Never
+#### Nested
+
+### MANDATORY
