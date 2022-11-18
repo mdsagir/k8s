@@ -216,3 +216,28 @@ If any active transaction is there throw exception
 If active transaction is there use it if any exception happed it create savepoint and rollaback to transaction at savepoint,
  if transaction not there create it and use it \
 [Note :JpaDialect does not support savepoints]
+
+## ISOLATION
+### READ_UNCOMMITTED
+Dirty read probelm when tx1 update record but not commited by the time tx2 will get the record later tx1 may rollback the tx2 having the old wrong data.
+```sql
+update order set price= price -20 where id=1; // by tx 1
+select * from order where id=1; // by tx 2
+rollback; // tx1
+```
+### READ_COMMITTED
+To fixes the problem can use READ_COMMITTED by the tx2 only get reord if tx1 have commited
+### REPEATABLE_READ
+```sql
+select * from order where id=1; // by tx 1
+update order set price= price -20 where id=1; // by tx 2
+select * from order where id=1; // by tx 1  get updated order price
+```
+tx1 having the wrong price value because by the time tx2 are updated, REPEATABLE_READ are can solve by locking the rows
+### SERIALIZABLE
+```sql
+select * from order where price between 100 to 2000; // 4 rows by tx1
+insert into order value(1, 150)                      // 
+select * from order where price between 100 to 2000; // 5 row by tx2
+```
+Fantom problem are happen if in range of data are updated by some other tx, SERIALIZABLE are locked the record which fall in between record
