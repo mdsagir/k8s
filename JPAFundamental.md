@@ -57,6 +57,38 @@ private Long id;
 @TableGenerator(name = "tableSequence")
 private Long id;
 ```
+> `UUID`: UUID Generator
+```java
+private String id = UUID.randomUUID().toString()
+```
+```java
+@Entity
+public class Product {
+
+    @Id
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "com.jpa.converter.UUIDGenerator")
+    private String id;
+}
+public class UUIDGenerator implements IdentifierGenerator {
+
+    @Override
+    public Serializable generate(SharedSessionContractImplementor session, Object object) throws HibernateException {
+        return UUID.randomUUID().toString();
+    }
+}
+public class RandomGenerator implements IdentifierGenerator {
+    @Override
+    public Serializable generate(SharedSessionContractImplementor session, Object object) throws HibernateException {
+        return getRandomNumber();
+    }
+
+    private Long getRandomNumber() {
+        return new Random().nextLong();
+    }
+}
+```
+
 ### Enum
 ```java
 @Entity
@@ -106,5 +138,27 @@ public class Product {
             this.value = value;
         }
     }
+}
+@Converter
+public class InvoiceAttributeConverter implements AttributeConverter<Invoice, String> {
+
+    @SneakyThrows
+    @Override
+    public String convertToDatabaseColumn(Invoice attribute) {
+        return new ObjectMapper().writeValueAsString(attribute);
+    }
+
+    @SneakyThrows
+    @Override
+    public Invoice convertToEntityAttribute(String dbData) {
+        return new ObjectMapper().readValue(dbData, Invoice.class);
+    }
+}
+@Entity
+public class Product {
+
+    @Convert(converter = InvoiceAttributeConverter.class)
+    private Invoice invoice;
+    
 }
 ```
