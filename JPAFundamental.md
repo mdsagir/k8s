@@ -164,6 +164,8 @@ public class Product {
 ```
 ### Embeddable
 > Same group of key repeat twice in fields, break down long entity
+
+> Class Type mapping
 ```java
 @Data
 @Embeddable
@@ -182,6 +184,7 @@ public class Product {
     private Receipt receipt;
 }
 ```
+> Collection type mapping
 ```java
 @Data
 @Embeddable
@@ -199,6 +202,7 @@ public class Product {
     private List<Seller> sellers;
 }   
 ```
+> Data Wrapper type mapping
 ```java
 @Entity
 public class Product {
