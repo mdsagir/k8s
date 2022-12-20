@@ -181,7 +181,8 @@ public class Product {
     @Embedded
     private Receipt receipt;
 }
-------------
+```
+```java
 @Data
 @Embeddable
 public class Seller {
@@ -197,7 +198,8 @@ public class Product {
     @ElementCollection(fetch = FetchType.EAGER)
     private List<Seller> sellers;
 }   
--------------
+```
+```java
 @Entity
 public class Product {
     @ElementCollection
