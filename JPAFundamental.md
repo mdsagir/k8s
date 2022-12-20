@@ -162,3 +162,66 @@ public class Product {
     
 }
 ```
+### Embeddable
+> Same group of key repeat twice in fields, break down long entity
+```java
+@Data
+@Embeddable
+public class Receipt {
+
+    private Double price;
+    private Double discountPrice;
+    private LocalDate orderDate;
+}
+@Entity
+public class Product {
+    
+    @Id
+    private Long id;
+    @Embedded
+    private Receipt receipt;
+}
+------------
+@Data
+@Embeddable
+public class Seller {
+    private String name;
+    private String address;
+}
+@Entity
+public class Product {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @ElementCollection(fetch = FetchType.EAGER)
+    private List<Seller> sellers;
+}   
+-------------
+@Entity
+public class Product {
+    @ElementCollection
+    private List<String> emails;
+
+    @ElementCollection
+    private Map<Integer, String> idEmailMap;
+}
+
+@Entity
+public class Product {
+
+    @Id
+    private Long id;
+
+    @ElementCollection
+    @Column(name = "email") // column name
+    @CollectionTable(name = "product_email", joinColumns = @JoinColumn(name = "id", referencedColumnName = "id"))
+    private List<String> emails;
+
+    @ElementCollection
+    @CollectionTable(name = "emailMobileMap", joinColumns = @JoinColumn(name = "id"))
+    @MapKeyColumn(name = "phone") // Map key
+    @Column(name = "email") // Map value
+    private Map<String, String> idEmailMap;
+}    
+```
